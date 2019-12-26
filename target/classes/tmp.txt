@@ -1,0 +1,4 @@
+#spring-mybatis.xml：整合spring与mybatis，并实现spring基本功能。
+#spring-mvc.xml：配置使用spring-mvc。
+#jdbc.propertis:资源文件，用来保存数据库相关信息。
+#log4j.properties:配置日志文件。

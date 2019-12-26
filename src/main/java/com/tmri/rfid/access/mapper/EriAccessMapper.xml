@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tmri.rfid.access.mapper.EriAccessMapper">
+	<select id="getAcsUserList" resultType="com.tmri.rfid.access.bean.AcsUser">
+		select * from acs_user where zt='1'
+		<if test="xh!=null and xh!=''">
+			and xh=#{xh}
+		</if>
+	</select>
+	
+	<select id="existApply" parameterType="com.tmri.rfid.rfid.bean.RfidApply" resultType="java.lang.Integer">
+		select count(*) from rfid_apply where zt!='1'
+		<if test="sqbh!=null and sqbh!=''">
+			and sqbh=#{sqbh}
+		</if>
+		<if test="hpzl!=null and hpzl!=''">
+			and hpzl=#{hpzl}
+		</if>
+		<if test="hphm!=null and hphm!=''">
+			and hphm=#{hphm}
+		</if>
+		<if test="kh!=null and kh!=''">
+			and kh=#{kh}
+		</if>
+		<if test="zt!=null and zt!=''">
+			<if test="zt.length()==1">
+				and zt=#{zt}
+			</if>
+			<if test="zt.length()!=1">
+				and zt in (${zt})
+			</if>
+		</if>
+	</select>
+	
+	<insert id="insertApply" parameterType="com.tmri.rfid.rfid.bean.RfidApply">
+		insert into RFID_APPLY (
+			SQBH,
+			SQLX,
+			HPZL,
+			HPHM,
+			SYCPLX,
+			SYCPID,
+			XSZH,
+			KH,
+			YWDW,
+			YWDWMC,
+			LRR,
+			LRRMC,
+			LRSJ,
+			GDR,
+			GDRMC,
+			GDSJ,
+			CLYW,
+			CLZT,
+			ZT,
+			JYW,
+			GXSJ)
+		values(
+			#{sqbh},
+			#{sqlx},
+			#{hpzl},
+			#{hphm},
+			#{sycplx},
+			#{sycpid},
+			#{xszh},
+			#{kh},
+			#{ywdw},
+			#{ywdwmc},
+			#{lrr},
+			#{lrrmc},
+			sysdate,
+			#{lrr},
+			#{lrrmc},
+			sysdate,
+			#{clyw},
+			#{clzt},
+			#{zt},
+			#{jyw},
+			sysdate)
+	</insert>
+	
+	<update id="updateApply" parameterType="com.tmri.rfid.rfid.bean.RfidApply">
+		update RFID_APPLY set
+			<if test="sqlx!=null and sqlx!=''">SQLX=#{sqlx},</if>
+			<if test="hpzl!=null and hpzl!=''">HPZL=#{hpzl},</if>
+			<if test="hphm!=null and hphm!=''">HPHM=#{hphm},</if>
+			<if test="sycplx!=null and sycplx!=''">SYCPLX=#{sycplx},</if>
+			<if test="sycpid!=null and sycpid!=''">SYCPID=#{sycpid},</if>
+			<if test="xszh!=null and xszh!=''">XSZH=#{xszh},</if>
+			<if test="kh!=null and kh!=''">KH=#{kh},</if>
+			<if test="ywdw!=null and ywdw!=''">YWDW=#{ywdw},</if>
+			<if test="ywdwmc!=null and ywdwmc!=''">YWDWMC=#{ywdwmc},</if>
+			<if test="lrr!=null and lrr!=''">LRR=#{lrr},</if>
+			<if test="lrrmc!=null and lrrmc!=''">LRRMC=#{lrrmc},</if>
+			<if test="lrsj!=null and lrsj!=''">LRSJ=#{lrsj},</if>
+			<if test="gdr!=null and gdr!=''">GDR=#{gdr},</if>
+			<if test="gdrmc!=null and gdrmc!=''">GDRMC=#{gdrmc},</if>
+			<if test="gdsj!=null and gdsj!=''">GDSJ=#{gdsj},</if>
+			<if test="clyw!=null and clyw!=''">CLYW=#{clyw},</if>
+			<if test="clzt!=null and clzt!=''">CLZT=#{clzt},</if>
+			<if test="zt!=null and zt!=''">ZT=#{zt},</if>
+			<if test="jyw!=null and jyw!=''">JYW=#{jyw},</if>
+			GXSJ=sysdate
+		where sqbh=#{sqbh}
+	</update>
+	
+	<select id="existApplyDoc" parameterType="com.tmri.rfid.rfid.bean.RfidApplyDoc" resultType="java.lang.Integer">
+		select count(*) from rfid_apply_doc where zt!='1'
+		<if test="sqbh!=null and sqbh!=''">
+			and sqbh=#{sqbh}
+		</if>
+		<if test="lx!=null and lx!=''">
+			and lx=#{lx}
+		</if>
+		<if test="xh!=null and xh!=''">
+			and xh=#{xh}
+		</if>
+	</select>
+	
+	<insert id="insertApplyDoc" parameterType="com.tmri.rfid.rfid.bean.RfidApplyDoc">
+		insert into RFID_APPLY_DOC (
+			XH,
+			SQBH,
+			LX,
+			WD,
+			ZT,
+			JYW,
+			GXSJ)
+		values (
+			#{xh},
+			#{sqbh},
+			#{lx},
+			#{wd,jdbcType=BLOB},
+			#{zt},
+			#{jyw},
+			sysdate)
+	</insert>
+	
+	<update id="updateApplyDoc" parameterType="com.tmri.rfid.rfid.bean.RfidApplyDoc">
+		update RFID_APPLY_DOC set
+			WD=#{wd},
+			GXSJ=sysdate
+		<choose>
+			<when test="xh!=null and xh!=''">
+				where xh=#{xh}
+			</when>
+			<otherwise>
+				where sqbh=#{sqbh} and lx=#{lx}
+			</otherwise>
+		</choose>
+	</update>
+	
+	<insert id="saveAccessRequest" parameterType="com.tmri.rfid.access.bean.RfidAccessRequest">
+		<selectKey keyProperty="xh" resultType="string" order="BEFORE">
+			SELECT SEQ_RFID_ACCESS_REQUEST.nextval from dual
+		</selectKey>
+		insert into RFID_ACCESS_REQUEST (
+			XH,
+			YHID,
+			IP,
+			ZS,
+			QM,
+			FF,
+			QQJG,
+			QQSJ,
+			SR,
+			SC,
+			ZT,
+			JYW,
+			GXSJ)
+		values (
+			#{xh},
+			#{yhid},
+			#{ip},
+			#{zs},
+			#{qm},
+			#{ff},
+			#{qqjg},
+			sysdate,
+			#{sr},
+			#{sc},
+			'1',
+			#{jyw},
+			sysdate)
+	</insert>
+	
+	<select id="getCheckList" resultType="com.tmri.rfid.rfid.bean.RfidApply">
+		select * from rfid_apply
+		where sqbh in
+		<foreach collection="array" item="d" index="index" open="(" close=")" separator=",">
+			#{d}
+		</foreach>
+		order by gxsj
+	</select>
+</mapper>

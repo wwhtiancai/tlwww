@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tmri.rfid.company.mapper.CpyFlowMapper">
+	<sql id="list_condition">
+		<if test="sqbh!=null and sqbh!=''">
+			and sqbh=#{sqbh}
+		</if>
+		<if test="zt!=null and zt!=''">
+			<if test="zt.length()==1">
+				and zt=#{zt}
+			</if>
+			<if test="zt.length()!=1">
+				and zt in (${zt})
+			</if>
+		</if>
+		<if test="kh!=null and kh!=''">
+			and kh=#{kh}
+		</if>
+		<if test="hpzl!=null and hpzl!=''">
+			and hpzl=#{hpzl}
+		</if>
+		<if test="hphm!=null and hphm!=''">
+			<bind name="_hphm" value="'%' + hphm + '%'" />
+			and hphm like #{_hphm}
+		</if>
+		<if test="sycpid!=null and sycpid!=''">
+			and sycpid=#{sycpid}
+		</if>
+		<if test="xszh!=null and xszh!=''">
+			and xszh=#{xszh}
+		</if>
+		<if test="ywdw!=null and ywdw!=''">
+			and ywdw=#{ywdw}
+		</if>
+		<if test="lrr!=null and lrr!=''">
+			and lrr=#{lrr}
+		</if>
+		<if test="qssj!=null and qssj!=''">
+			<![CDATA[
+				and lrsj>=to_date(#{qssj}, 'yyyy-MM-dd')
+			]]>
+		</if>
+		<if test="zzsj!=null and zzsj!=''">
+			<![CDATA[
+				and lrsj<to_date(#{zzsj}, 'yyyy-MM-dd')+1
+			]]>
+		</if>
+		<if test="bz!=null and bz!=''">
+			order by #{bz}
+		</if>
+		<if test="bz==null or bz==''">
+			order by gxsj desc
+		</if>
+	</sql>
+	<select id="list" resultType="com.tmri.rfid.company.bean.CpyRfidApply">
+		select * from RFID_APPLY where zt!='0'
+		<include refid="list_condition"/>
+	</select>
+	
+	<update id="update" parameterType="com.tmri.rfid.company.bean.CpyRfidApply">
+		update RFID_APPLY set
+			lsh=#{lsh},
+			hpzl=#{hpzl},
+			hphm=#{hphm},
+			jdcxh=#{jdcxh},
+			tid=#{tid},
+			sycpid=#{sycpid},
+			xszh=#{xszh},
+			kh=#{kh},
+			ywdw=#{ywdw},
+			ywdwmc=#{ywdwmc},
+			gdr=#{gdr},
+			gdrmc=#{gdrmc},
+			<if test="gdsj=='sysdate'">gdsj=sysdate,</if>
+			tbyy=#{tbyy},
+			tbsm=#{tbsm},
+			tbyzt=#{tbyzt},
+			sfysw=#{sfysw},
+			clyw=#{clyw},
+			clzt=#{clzt},
+			clnr=#{clnr},
+			zt=#{zt},
+			jyw=#{jyw},
+			gxr=#{gxr},
+			gxrxm=#{gxrxm},
+			gxsj=sysdate,
+			bz=#{bz}
+		where sqbh=#{sqbh} and zt!='0'
+	</update>
+	<select id="getApply" resultType="com.tmri.rfid.company.bean.CpyRfidApply">
+		select * from RFID_APPLY where zt!='0' and sqbh=#{sqbh}
+	</select>	
+	<select id="getApplyDoc" resultType="com.tmri.rfid.company.bean.CpyRfidApplyDoc">
+		select * from RFID_APPLY_DOC where zt!='0' and sqbh=#{sqbh} order by lx
+	</select>
+</mapper>

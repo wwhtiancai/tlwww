@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tmri.rfid.framework.mapper.FrmMapper">
+	<select id="getSysparaList" resultType="com.tmri.rfid.framework.bean.SysPara">
+		select * from frm_syspara order by xssx
+	</select>
+	<select id="getSysparaValueList" resultType="com.tmri.rfid.framework.bean.SysparaValue">
+		select * from frm_syspara_value order by xtlb,glbm,gjz
+	</select>
+	
+	<select id="getSyspara" resultType="com.tmri.rfid.framework.bean.SysPara">
+		select * from frm_syspara
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="xtlb!=null and xtlb!=''">
+				and xtlb=#{xtlb}
+			</if>
+			<if test="cslx!=null and cslx!=''">
+				and cslx=#{cslx}
+			</if>
+			<if test="gjz!=null and gjz!=''">
+				and gjz=#{gjz}
+			</if>
+		</trim>
+	</select>
+	<select id="getCodeList" resultType="com.tmri.rfid.framework.bean.Code">
+		select * from frm_code where zt='1'
+		<if test="xtlb!=null and xtlb!=''">
+			and xtlb=#{xtlb}
+		</if>
+		<if test="dmlb!=null and dmlb!=''">
+			and dmlb=#{dmlb}
+		</if>
+		<if test="dmz!=null and dmz!=''">
+			and dmz=#{dmz}
+		</if>
+		order by xtlb,dmlb,sxh,dmz
+	</select>
+	
+	<select id="getDepartmentList" resultType="com.tmri.rfid.framework.bean.Department">
+		select * from frm_department where jlzt='1' order by glbm
+	</select>
+	<select id="getDepartment" resultType="com.tmri.rfid.framework.bean.Department">
+		select * from frm_department where jlzt='1' and glbm=#{glbm}
+	</select>
+	
+	<select id="getWhiteList" resultType="com.tmri.rfid.framework.bean.Code">
+		select lx dmlb,lm dmsm1,ffm dmsm2 from frm_whitelist order by lx,lm,ffm
+	</select>
+	
+	<select id="getUserList" resultType="com.tmri.rfid.framework.bean.SysUser">
+		select * from frm_sysuser where zt='1'
+		<if test="yhdh!=null and yhdh!=''">
+			and yhdh=#{yhdh}
+		</if>
+		<if test="yhzh!=null and yhzh!=''">
+			and yhzh=#{yhzh}
+		</if>
+		<if test="glbm!=null and glbm!=''">
+			and glbm=#{glbm}
+		</if>
+	</select>
+	
+	<select id="getProgramList" parameterType="java.lang.String" resultType="com.tmri.rfid.framework.bean.Program">
+		select * from frm_program where xtlb||cdbh in 
+		(select xtlb||cdbh from frm_rolemenu where jsdh in 
+		(select jsdh from frm_userrole where yhdh=#{yhdh})
+		) order by mldh,sxh
+	</select>
+	
+	<select id="getFoldList" resultType="com.tmri.rfid.framework.bean.Fold">
+		select * from frm_fold
+		where mldh in
+		<foreach collection="array" item="d" index="index" open="(" close=")" separator=",">
+			#{d}
+		</foreach>
+		order by sjmldh,sxh
+	</select>
+
+	<insert id="insertSysrun" parameterType="com.tmri.rfid.framework.bean.Sysrun">
+		insert into FRM_SYSRUN (bh,ip,fwym,fwsj,fwys,glbm,yhdh,cdbh,xzqh,jyw,bz)
+    values (seq_sysrun_bh.nextval,#{ip},#{fwym},sysdate,#{fwys},#{glbm},#{yhdh},#{cdbh},#{xzqh},#{jyw},#{bz})
+	</insert>
+	
+</mapper>

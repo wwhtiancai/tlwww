@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+                        http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context-3.1.xsd
+                        http://www.springframework.org/schema/tx
+                        http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+    <!-- 自动扫描 -->
+    <context:component-scan base-package="com.tmri.rfid">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+    <!-- 引入数据库配置文件 -->
+    <bean id = "propertyConfigurer"
+          class = "org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
+        <property name = "location" value="classpath:properties/jdbc.properties" />
+    </bean>
+    <!-- 连接池 -->
+    <bean id = "dataSource" class = "org.apache.commons.dbcp.BasicDataSource"
+          destroy-method = "close">
+        <property name="driverClassName" value="${jdbc.driver}" />
+        <property name="url" value="${jdbc.url}" />
+        <property name="username" value="${jdbc.username}" />
+        <property name="password" value="${jdbc.password}" />
+        <!-- 初始化连接大小 -->
+        <property name="initialSize" value="${jdbc.initialSize}" />
+        <!-- 连接池最大数量 -->
+        <property name="maxActive" value="${jdbc.maxActive}"/>
+        <!-- 连接池最大空闲 -->
+        <property name="maxIdle" value="${jdbc.maxIdle}" />
+        <!-- 连接池最小空闲 -->
+        <property name="minIdle" value="${jdbc.minIdle}" />
+        <!-- 获取连接最大等待时间 -->
+        <property name="maxWait" value="${jdbc.maxWait}" />
+    </bean>
+
+    <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxIdle" value="${redis.maxIdle}" />
+        <property name="maxActive" value="${redis.maxActive}" />
+        <property name="maxWait" value="${redis.maxWait}" />
+        <property name="testOnBorrow" value="${redis.testOnBorrow}" />
+    </bean>
+
+    <bean id="connectionFactory"  class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <property name="hostName" value="${redis.host}" />
+        <property name="port" value="${redis.port}" />
+        <property name="password" value="${redis.password}" />
+        <property name="poolConfig" ref="poolConfig" />
+    </bean>
+
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+        <property name="connectionFactory" ref="connectionFactory" />
+    </bean>
+    <!--<bean id="rfidEriDao" class="com.tmri.rfid.web.service.impl.RfidEriDaoImpl"></bean>-->
+
+    <!--<bean id="pageplugins" class="com.github.pagehelper.PageInterceptor">-->
+    <!--</bean>-->
+    <!-- 结合Spring和Mybatis -->
+    <bean id = "sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <!-- 自动扫描mapping.xml文件 -->
+        <property name="mapperLocations" >
+					<list>
+						<!-- 企业版使用 -->
+						<value>classpath:mapper/classes/com/tmri/rfid/framework/mapper/*Mapper.xml</value>
+						<value>classpath:mapper/classes/com/tmri/rfid/company/mapper/*Mapper.xml</value>
+						<!-- 企业版使用 -->
+						<value>classpath:mapper/classes/com/tmri/rfid/access/mapper/*Mapper.xml</value>
+						<value>classpath:mapper/*Mapper.xml</value>
+					</list>
+				</property>
+        <property name="configLocation" value="classpath:application/mybatis-config.xml"/>
+        <property name="plugins">
+            <array>
+                <bean class="com.github.pagehelper.PageInterceptor">
+                    <property name="properties">
+                        <value>
+                            helperDialect=oracle
+                        </value>
+                    </property>
+                </bean>
+            </array>
+        </property>
+        <!--<property name="configLocation" value="classpath:mybatis-config.xml"/>-->
+    </bean>
+
+    <!-- DAO接口所在包名，Spring会自动查找其下的类 -->
+    <bean class = "org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name = "basePackage" value="com.tmri.rfid.*.mapper" />
+        <property name = "sqlSessionFactoryBeanName" value = "sqlSessionFactory" />
+    </bean>
+
+    <!-- 定义事务 -->
+    <bean id = "transactionManager"
+          class = "org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name = "dataSource" ref = "dataSource" />
+    </bean>
+
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="*" propagation="SUPPORTS" read-only="true" />
+            <tx:method name="select*" read-only="true" />
+            <tx:method name="get*" read-only="true" />
+            <tx:method name="list*" read-only="true" />
+            <tx:method name="query*" read-only="true" />
+            <tx:method name="insert*" propagation="REQUIRED" rollback-for="java.lang.Exception"/>
+            <tx:method name="update*" propagation="REQUIRED" rollback-for="java.lang.Exception"/>
+            <tx:method name="del*" propagation="REQUIRED" rollback-for="java.lang.Exception"/>
+            <tx:method name="add*" propagation="REQUIRED" rollback-for="java.lang.Exception"/>
+            <tx:method name="save*" propagation="REQUIRED" rollback-for="java.lang.Exception"/>
+            <tx:method name="write*" propagation="REQUIRED" rollback-for="java.lang.Exception"/>
+            <tx:method name="do*" propagation="REQUIRED" rollback-for="java.lang.Exception"/>
+            <tx:method name="stat*" propagation="REQUIRED" rollback-for="java.lang.Exception"/>
+            <tx:method name="lock*" propagation="REQUIRED" rollback-for="java.lang.Exception"/>
+            <tx:method name="audit*" propagation="REQUIRED" rollback-for="java.lang.Exception"/>
+        </tx:attributes>
+    </tx:advice>
+    <aop:config proxy-target-class="true">
+        <aop:pointcut id="txPointcut" expression="execution(* com.tmri.*.service.*.*(..)) or execution(* com.tmri.*.*.service.*.*(..))" />
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="txPointcut" />
+    </aop:config>
+    <!-- 使用注解定义事务 -->
+    <!--<tx:annotation-driven transaction-manager = "transactionManager" />-->
+    <context:annotation-config />
+</beans>

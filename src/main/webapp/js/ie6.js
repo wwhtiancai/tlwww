@@ -1,0 +1,1 @@
+var isIE6=/msie 6/i.test(navigator.userAgent);isIE6&&(document.location.href="ie6.html");

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tmri.rfid.rfid.mapper.RfidApplyDocMapper">
+	<insert id="insert" parameterType="com.tmri.rfid.rfid.bean.RfidApplyDoc">
+		insert into RFID_APPLY_DOC (
+			XH,
+			SQBH,
+			LX,
+			WD,
+			ZT,
+			JYW,
+			GXSJ,
+			BZ)
+		values (
+			#{xh},
+			#{sqbh},
+			#{lx},
+			#{wd,jdbcType=BLOB},
+			#{zt},
+			#{jyw},
+			<choose>
+				<when test="gxsj!=null and gxsj!=''">
+					to_date(#{gxsj}, 'yyyy-mm-dd hh24:mi:ss'),
+				</when>
+				<otherwise>
+					null,
+				</otherwise>
+			</choose>
+			#{bz})
+	</insert>
+	
+	<update id="update" parameterType="com.tmri.rfid.rfid.bean.RfidApplyDoc">
+		update RFID_APPLY_DOC set
+			WD=#{wd},
+			gxsj=sysdate
+		where xh=#{xh}
+	</update>
+	
+	<select id="list" resultType="com.tmri.rfid.rfid.bean.RfidApplyDoc">
+		select * from RFID_APPLY_DOC where sqbh=#{0}
+	</select>
+	
+	<select id="get" resultType="com.tmri.rfid.rfid.bean.RfidApplyDoc">
+		select * from RFID_APPLY_DOC where zt='1'
+		<if test="xh==null or xh==''">
+			and xh=#{xh}
+		</if>
+		<if test="sqbh==null or sqbh==''">
+			and sqbh=#{sqbh}
+		</if>
+		<if test="lx==null or lx==''">
+			and lx=#{lx}
+		</if>
+	</select>
+
+</mapper>

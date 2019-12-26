@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tmri.rfid.rfid.mapper.RfidApplyMapper">
+	<select id="getEriList" resultType="com.tmri.rfid.web.bean.RfidEri">
+		select * from rfid_eri where zt!='0'
+		<if test="tid!=null and tid!=''">
+			and tid=#{tid}
+		</if>
+		<if test="kh!=null and kh!=''">
+			and kh=#{kh}
+		</if>
+		<if test="hpzl!=null and hpzl!=''">
+			and hpzl=#{hpzl}
+		</if>
+		<if test="hphm!=null and hphm!=''">
+			<bind name="_hphm" value="'%' + hphm + '%'" />
+			and hphm like #{_hphm}
+		</if>
+	</select>
+	
+	<sql id="list_condition">
+		<if test="sqbh!=null and sqbh!=''">
+			and sqbh=#{sqbh}
+		</if>
+		<if test="zt!=null and zt!=''">
+			<if test="zt.length()==1">
+				and zt=#{zt}
+			</if>
+			<if test="zt.length()!=1">
+				and zt in (${zt})
+			</if>
+		</if>
+		<if test="kh!=null and kh!=''">
+			and kh=#{kh}
+		</if>
+		<if test="hpzl!=null and hpzl!=''">
+			and hpzl=#{hpzl}
+		</if>
+		<if test="hphm!=null and hphm!=''">
+			<bind name="_hphm" value="'%' + hphm + '%'" />
+			and hphm like #{_hphm}
+		</if>
+		<if test="sycpid!=null and sycpid!=''">
+			and sycpid=#{sycpid}
+		</if>
+		<if test="xszh!=null and xszh!=''">
+			and xszh=#{xszh}
+		</if>
+		<if test="ywdw!=null and ywdw!=''">
+			and ywdw=#{ywdw}
+		</if>
+		<if test="lrr!=null and lrr!=''">
+			and lrr=#{lrr}
+		</if>
+		<if test="qssj!=null and qssj!=''">
+			<![CDATA[
+				and lrsj>=to_date(#{qssj}, 'yyyy-MM-dd')
+			]]>
+		</if>
+		<if test="zzsj!=null and zzsj!=''">
+			<![CDATA[
+				and lrsj<to_date(#{zzsj}, 'yyyy-MM-dd')+1
+			]]>
+		</if>
+		<if test="bz!=null and bz!=''">
+			order by #{bz}
+		</if>
+		<if test="bz==null or bz==''">
+			order by gxsj desc
+		</if>
+	</sql>
+	<select id="list" resultType="com.tmri.rfid.rfid.bean.RfidApply">
+		select * from RFID_APPLY where zt!='0'
+		<include refid="list_condition"/>
+	</select>
+	
+	<select id="listForMap" resultType="Map">
+		select sqbh as "sqbh",sqlx as "sqlx",hphm as "hphm",hpzl as "hpzl",sycpid as "sycpid",xszh as "xszh",
+		kh as "kh",ywdw as "ywdw",ywdwmc as "ywdwmc",lrr as "lrr",lrrmc as "lrrmc",to_char(lrsj,'yyyy-mm-dd hh24:mi:ss') as "lrsj",
+		zt as "zt",to_char(gxsj,'yyyy-mm-dd hh24:mi:ss') as "gxsj" from rfid_apply where zt!='0'
+		<include refid="list_condition"/>
+	</select>
+
+	<select id="get" resultType="com.tmri.rfid.rfid.bean.RfidApply">
+		select * from RFID_APPLY where zt!='0' and sqbh=#{0}
+	</select>
+	
+	<insert id="insert" parameterType="com.tmri.rfid.rfid.bean.RfidApply">
+		insert into RFID_APPLY (
+			SQBH,
+			LSH,
+			SQLX,
+			JDCXH,
+			HPZL,
+			HPHM,
+			TID,
+			sycpid,
+			xszh,
+			KH,
+			YWDW,
+			YWDWMC,
+			LRR,
+			LRRMC,
+			LRSJ,
+			ZT,
+			JYW,
+			GXR,
+			GXRXM,
+			GXSJ,
+			BZ)
+		values(
+			#{sqbh},
+			#{lsh},
+			#{sqlx},
+			#{jdcxh},
+			#{hpzl},
+			#{hphm},
+			#{tid},
+			#{sycpid},
+			#{xszh},
+			#{kh},
+			#{ywdw},
+			#{ywdwmc},
+			#{lrr},
+			#{lrrmc},
+			sysdate,
+			#{zt},
+			#{jyw},
+			#{gxr},
+			#{gxrxm},
+			sysdate,
+			#{bz})
+	</insert>
+	
+	<update id="update" parameterType="com.tmri.rfid.rfid.bean.RfidApply">
+		update RFID_APPLY set
+			lsh=#{lsh},
+			hpzl=#{hpzl},
+			hphm=#{hphm},
+			jdcxh=#{jdcxh},
+			tid=#{tid},
+			sycpid=#{sycpid},
+			xszh=#{xszh},
+			kh=#{kh},
+			ywdw=#{ywdw},
+			ywdwmc=#{ywdwmc},
+			gdr=#{gdr},
+			gdrmc=#{gdrmc},
+			<if test="gdsj=='sysdate'">gdsj=sysdate,</if>
+			tbyy=#{tbyy},
+			tbsm=#{tbsm},
+			tbyzt=#{tbyzt},
+			sfysw=#{sfysw},
+			clyw=#{clyw},
+			clzt=#{clzt},
+			clnr=#{clnr},
+			zt=#{zt},
+			jyw=#{jyw},
+			gxr=#{gxr},
+			gxrxm=#{gxrxm},
+			gxsj=sysdate,
+			bz=#{bz}
+		where sqbh=#{sqbh} and zt!='0'
+	</update>
+	
+</mapper>

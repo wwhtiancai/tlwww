@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tmri.rfid.company.mapper.CpyQueryMapper">
+	<select id="getQueryFlowList" resultType="com.tmri.rfid.company.bean.CpyRfidApply">
+		select * from rfid_apply where zt!='0'
+		<if test="sqbh!=null and sqbh!=''">
+			and sqbh=#{sqbh}
+		</if>
+		<if test="kh!=null and kh!=''">
+			and kh=#{kh}
+		</if>
+		<if test="hpzl!=null and hpzl!=''">
+			and hpzl=#{hpzl}
+		</if>
+		<if test="hphm!=null and hphm!=''">
+			<bind name="_hphm" value="'%' + hphm + '%'" />
+			and hphm like #{_hphm}
+		</if>
+		<if test="kssj!=null and kssj!=''">
+			<![CDATA[
+				and lrsj>=to_date(#{kssj}, 'yyyy-MM-dd')
+			]]>
+		</if>
+		<if test="jssj!=null and jssj!=''">
+			<![CDATA[
+				and lrsj<to_date(#{jssj}, 'yyyy-MM-dd')+1
+			]]>
+		</if>
+		<if test="zt!=null and zt!=''">
+			<if test="zt.length()==1">
+				and zt=#{zt}
+			</if>
+			<if test="zt.length()!=1">
+				and zt in (${zt})
+			</if>
+		</if>
+		order by lrsj desc
+	</select>
+	
+	<select id="getApplyDocList"  resultType="com.tmri.rfid.company.bean.CpyRfidApplyDoc">
+		select * from RFID_APPLY_DOC where sqbh=#{0} and lx=#{1} and zt='1' order by gxsj desc
+	</select>
+</mapper>

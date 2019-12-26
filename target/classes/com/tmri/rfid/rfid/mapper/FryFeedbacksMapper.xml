@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tmri.rfid.rfid.mapper.FryFeedbacksMapper">
+
+	<insert id="insertFryFeedbacks" parameterType="com.tmri.rfid.rfid.bean.FryFeedbacks">
+		insert into FRY_FEEDBACK (fklsh,sjbbh,czjg,cwnr,zt,jyw,gxsj,bz)
+    		values (SEQ_FRY_FEEDBACK.nextval,#{sjbbh},#{czjg},#{cwnr},#{zt},#{jyw},sysdate,#{bz});
+	</insert>
+
+
+</mapper>

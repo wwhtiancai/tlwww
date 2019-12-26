@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tmri.rfid.rfid.mapper.BaseMapper">
+
+	<select id="selectById" parameterType="String" resultType="java.util.LinkedHashMap">
+		<![CDATA[
+            SELECT *  FROM (${value}) obj
+          ]]>
+	</select>
+
+	<select id="countSql" parameterType="String" resultType="int">
+		<![CDATA[
+            ${value}
+          ]]>
+	</select>
+
+	<insert id="insertSql" parameterType="String">
+		<![CDATA[
+            ${value}
+          ]]>
+	</insert>
+
+	<update id="updateSql" parameterType="String">
+		<![CDATA[
+            ${value}
+          ]]>
+	</update>
+
+	<select id="selectBlobById" parameterType="java.lang.String" resultType="com.tmri.rfid.rfid.bean.BlobBean" statementType="PREPARED" >
+		<![CDATA[
+            SELECT ${item} FROM ${table} where ${zjSql}
+          ]]>
+	</select>
+
+	<update id="updateBlobById" parameterType="com.tmri.rfid.rfid.bean.BlobBean" statementType="PREPARED" >
+		<![CDATA[
+            update ${table} set ${item} = #{wd,jdbcType=BLOB} where ${zjSql}
+          ]]>
+	</update>
+
+</mapper>

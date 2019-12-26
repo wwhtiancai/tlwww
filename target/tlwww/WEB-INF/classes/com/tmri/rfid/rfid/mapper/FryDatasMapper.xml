@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tmri.rfid.rfid.mapper.FryDatasMapper">
+
+	<insert id ="insertFryDatasBatch" parameterType="java.util.List" useGeneratedKeys="false">
+		<selectKey resultType="long" keyProperty="id" order="BEFORE">
+			SELECT SEQ_FRY_DATAS.NEXTVAL FROM dual
+		</selectKey>
+		insert into FRY_DATAS
+			(jhlsh,sjbbh,sjbsy,sjbdx,zt,jyw,gxsj,bz,sj1,sj2,sj3,sj4,sj5,sj6,sj7,sj8,sj9,sj10,sj11,sj12,sj13,sj14,sj15,sj16,sj17,sj18,sj19,sj20,sj21,sj22,sj23,sj24,sj25,sj26,sj27,sj28,sj29,sj30,sj31,sj32,sj33,sj34,sj35,sj36,sj37,sj38,sj39,sj40,sj41,sj42,sj43,sj44,sj45,sj46,sj47,sj48,sj49,sj50,sj51,sj52,sj53,sj54,sj55,sj56,sj57,sj58,sj59,sj60,sj61,sj62,sj63,sj64,sj65,sj66,sj67,sj68,sj69,sj70,sj71,sj72,sj73,sj74,sj75,sj76,sj77,sj78,sj79,sj80,sj81,sj82,sj83,sj84,sj85,sj86,sj87,sj88,sj89,sj90,sj91,sj92,sj93,sj94,sj95,sj96,sj97,sj98,sj99,sj100)
+		SELECT SEQ_FRY_DATAS.NEXTVAL, m.* FROM (
+		<foreach collection ="list" item="item" index= "index" separator ="union all">
+			SELECT
+				#{item.sjbbh},
+				#{item.sjbsy},
+				#{item.sjbdx},
+				#{item.zt},
+				#{item.jyw},
+				sysdate,
+				#{item.bz},
+				#{item.sj1},
+				#{item.sj2},
+				#{item.sj3},
+				#{item.sj4},
+				#{item.sj5},
+				#{item.sj6},
+				#{item.sj7},
+				#{item.sj8},
+				#{item.sj9},
+				#{item.sj10},
+				#{item.sj11},
+				#{item.sj12},
+				#{item.sj13},
+				#{item.sj14},
+				#{item.sj15},
+				#{item.sj16},
+				#{item.sj17},
+				#{item.sj18},
+				#{item.sj19},
+				#{item.sj20},
+				#{item.sj21},
+				#{item.sj22},
+				#{item.sj23},
+				#{item.sj24},
+				#{item.sj25},
+				#{item.sj26},
+				#{item.sj27},
+				#{item.sj28},
+				#{item.sj29},
+				#{item.sj30},
+				#{item.sj31},
+				#{item.sj32},
+				#{item.sj33},
+				#{item.sj34},
+				#{item.sj35},
+				#{item.sj36},
+				#{item.sj37},
+				#{item.sj38},
+				#{item.sj39},
+				#{item.sj40},
+				#{item.sj41},
+				#{item.sj42},
+				#{item.sj43},
+				#{item.sj44},
+				#{item.sj45},
+				#{item.sj46},
+				#{item.sj47},
+				#{item.sj48},
+				#{item.sj49},
+				#{item.sj50},
+				#{item.sj51},
+				#{item.sj52},
+				#{item.sj53},
+				#{item.sj54},
+				#{item.sj55},
+				#{item.sj56},
+				#{item.sj57},
+				#{item.sj58},
+				#{item.sj59},
+				#{item.sj60},
+				#{item.sj61},
+				#{item.sj62},
+				#{item.sj63},
+				#{item.sj64},
+				#{item.sj65},
+				#{item.sj66},
+				#{item.sj67},
+				#{item.sj68},
+				#{item.sj69},
+				#{item.sj70},
+				#{item.sj71},
+				#{item.sj72},
+				#{item.sj73},
+				#{item.sj74},
+				#{item.sj75},
+				#{item.sj76},
+				#{item.sj77},
+				#{item.sj78},
+				#{item.sj79},
+				#{item.sj80},
+				#{item.sj81},
+				#{item.sj82},
+				#{item.sj83},
+				#{item.sj84},
+				#{item.sj85},
+				#{item.sj86},
+				#{item.sj87},
+				#{item.sj88},
+				#{item.sj89},
+				#{item.sj90},
+				#{item.sj91},
+				#{item.sj92},
+				#{item.sj93},
+				#{item.sj94},
+				#{item.sj95},
+				#{item.sj96},
+				#{item.sj97},
+				#{item.sj98},
+				#{item.sj99},
+				#{item.sj100}
+			FROM DUAL
+		</foreach >
+		) m
+	</insert >
+
+	<select id="getBySjbbh" parameterType="java.lang.String" resultType="com.tmri.rfid.rfid.bean.FryDatas">
+		select * from FRY_DATAS where sjbbh=#{sjbbh} order by sjbsy
+	</select>
+
+	<delete id="deleteBySjbbh" parameterType="java.lang.String">
+		delete from FRY_DATA where sjbbh = #{sjbbh}
+	</delete>
+
+
+</mapper>
